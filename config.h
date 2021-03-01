@@ -15,17 +15,26 @@ static int swallowfloating    = 0;        /* 1 means swallow floating windows by
 static int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
 static int showbar            = 1;        /* 0 means no bar */
 static int topbar             = 1;        /* 0 means bottom bar */
-static char *fonts[]          = { "monospace:size=10", "JoyPixels:pixelsize=10:antialias=true:autohint=true", "Font Awesome 5 Free:style=regular:size=14" };
+static char *fonts[]          = { "monospace:size=10", "JoyPixels:pixelsize=10:antialias=true:autohint=true", "Font Awesome 5 Free:style=regular:pixelsize=24" };
 static char normbgcolor[]           = "#222222";
-static char normbordercolor[]       = "#444444";
+static char normbordercolor[]       = "#555277";
 static char normfgcolor[]           = "#bbbbbb";
 static char selfgcolor[]            = "#eeeeee";
-static char selbordercolor[]        = "#8be9fd";
-static char selbgcolor[]            = "#005577";
+static char selbordercolor[]        = "#6689F2";
+static char selbgcolor[]            = "#31316C";
 static char *colors[][3] = {
        /*               fg           bg           border   */
        [SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
        [SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
+};
+
+
+static const unsigned int baralpha = 0xcc;
+static const unsigned int borderalpha = OPAQUE;
+static const unsigned int alphas[][3]      = {
+	/*               fg      bg        border     */
+	[SchemeNorm] = { OPAQUE, baralpha, borderalpha },
+	[SchemeSel]  = { OPAQUE, baralpha, borderalpha },
 };
 
 typedef struct {
