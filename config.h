@@ -26,17 +26,29 @@ static char selbgcolor[]            = "#31316C";
 static const unsigned int baralpha = 0xdf;
 
 static char *colors[][3] = {
-       /*               fg           bg           border   */
-       [SchemeNorm]  = { normfgcolor, normbgcolor, normbordercolor },
-       [SchemeSel]   = { selfgcolor,  selbgcolor,  selbordercolor  },
-	   [SchemeTitle] = { selfgcolor,  normbgcolor, normbordercolor },
+       /*               		fg           bg           border   */
+       	[SchemeNorm]  		= { normfgcolor, 	normbgcolor, 	normbordercolor },
+       	[SchemeSel]   		= { selfgcolor,  	selbgcolor,  	selbordercolor  },
+
+	   	[SchemeStatus] 		= { normfgcolor, 	normbgcolor,  	"#000000"  }, // Statusbar right
+
+   		[SchemeTagsNorm]	= { normfgcolor, 	normbgcolor,  	"#000000"  }, // Tagbar left
+		[SchemeTagsSel]  	= { selfgcolor, 	selbgcolor,  	"#000000"  }, // Tagbar left selected
+	    [SchemeInfoNorm]  	= { normfgcolor, 	normbgcolor,  	"#000000"  }, // Titlebar
+    	[SchemeInfoSel]  	= { selfgcolor,		normbgcolor,  	"#000000"  }, // Titlebar selected
 };
 
 static const unsigned int alphas[][3]      = {
 	/*               fg      bg        border     */
-	[SchemeNorm]  = { OPAQUE, baralpha, OPAQUE },
-	[SchemeSel]   = { OPAQUE, baralpha, OPAQUE },
-	[SchemeTitle] = { OPAQUE, baralpha, OPAQUE },
+	[SchemeNorm]  		= { OPAQUE, baralpha, OPAQUE },
+	[SchemeSel]   		= { OPAQUE, baralpha, OPAQUE },
+
+	[SchemeStatus] 		= { OPAQUE, baralpha, OPAQUE  }, // Statusbar right
+
+	[SchemeTagsNorm] 	= { OPAQUE, baralpha, OPAQUE  }, // Tagbar left
+	[SchemeTagsSel] 	= { OPAQUE, baralpha, OPAQUE  }, // Tagbar left selected
+	[SchemeInfoNorm]  	= { OPAQUE, baralpha, OPAQUE  }, // Titlebar
+	[SchemeInfoSel]  	= { OPAQUE,	baralpha, OPAQUE  }, // Titlebar selected
 
 };
 
