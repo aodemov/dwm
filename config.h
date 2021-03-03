@@ -1,39 +1,52 @@
-/* See LICENSE file for copyright and license details. */
+// Includes
+#include "vanitygaps.c"
+#include <X11/XF86keysym.h>
+#include "shiftview.c"
 
-/* Constants */
+// Constants
 #define TERMINAL "st"
 #define TERMCLASS "St"
 
-/* appearance */
+
 static unsigned int borderpx  = 3;        /* border pixel of windows */
 static unsigned int snap      = 32;       /* snap pixel */
 
+static int showbar            = 1;        /* 0 means no bar */
+static int topbar             = 1;        /* 0 means bottom bar */
+
+// Systray
 static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systrayspacing = 2;   /* systray spacing */
 static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
 static const int showsystray        = 1;     /* 0 means no systray */
 
+// Gaps
 static unsigned int gappih    = 16;       /* horiz inner gap between windows */
 static unsigned int gappiv    = 16;       /* vert inner gap between windows */
 static unsigned int gappoh    = 16;       /* horiz outer gap between windows and screen edge */
 static unsigned int gappov    = 16;       /* vert outer gap between windows and screen edge */
-static int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
 static int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
-static int showbar            = 1;        /* 0 means no bar */
-static int topbar             = 1;        /* 0 means bottom bar */
-static char *fonts[]          = { "monospace:size=10.5","FontAwesome 5 Free Solid:pixelsize=15:antialias=true:autohint=true" };
-// "JoyPixels:pixelsize=10:antialias=true:autohint=true", 
-static char normbgcolor[]           = "#222222";
-static char normbordercolor[]       = "#555277";
-static char normfgcolor[]           = "#bbbbbb";
-static char selfgcolor[]            = "#eeeeee";
-static char selbordercolor[]        = "#6689F2";
-static char selbgcolor[]            = "#31316C";
+
+static int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
+
+// Fonts
+static char *fonts[] = { 
+	"monospace:size=10.5",
+	"FontAwesome 5 Free Solid:pixelsize=15:antialias=true:autohint=true",
+};
+
+// Colors
+static char normbgcolor[]    	= "#222222";
+static char normbordercolor[]	= "#555277";
+static char normfgcolor[]    	= "#bbbbbb";
+static char selfgcolor[]     	= "#eeeeee";
+static char selbordercolor[] 	= "#6689F2";
+static char selbgcolor[]     	= "#31316C";
 
 static const unsigned int baralpha = 0xdf;
 
 static char *colors[][3] = {
-       /*               		fg           bg           border   */
+       /*               		fg           	bg           	border   */
        	[SchemeNorm]  		= { normfgcolor, 	normbgcolor, 	normbordercolor },
        	[SchemeSel]   		= { selfgcolor,  	selbgcolor,  	selbordercolor  },
 
@@ -45,8 +58,8 @@ static char *colors[][3] = {
     	[SchemeInfoSel]  	= { selfgcolor,		normbgcolor,  	"#000000"  }, // Titlebar selected
 };
 
-static const unsigned int alphas[][3]      = {
-	/*               fg      bg        border     */
+static const unsigned int alphas[][3] = {
+	/*               		fg      bg        border     */
 	[SchemeNorm]  		= { OPAQUE, baralpha, OPAQUE },
 	[SchemeSel]   		= { OPAQUE, baralpha, OPAQUE },
 
@@ -59,6 +72,7 @@ static const unsigned int alphas[][3]      = {
 
 };
 
+// Scratchpads
 typedef struct {
 	const char *name;
 	const void *cmd;
@@ -66,19 +80,21 @@ typedef struct {
 const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "120x34", NULL };
 const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "monospace:size=16", "-g", "50x20", "-e", "bc", "-lq", NULL };
 static Sp scratchpads[] = {
-	/* name          cmd  */
 	{"spterm",      spcmd1},
 	{"spcalc",      spcmd2},
 };
 
-/* tagging */
+// Tagging
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
+// Rules
+
+/* xprop(1):
+ *	WM_CLASS(STRING) = instance, class
+ *	WM_NAME(STRING) = title
+*/
+
 static const Rule rules[] = {
-	/* xprop(1):
-	 *	WM_CLASS(STRING) = instance, class
-	 *	WM_NAME(STRING) = title
-	*/
 	/* class        		instance    	title       	 	tags mask       iscentered	isfloating  isterminal  noswallow 	monitor */
 	{ TERMCLASS,  			NULL,       	NULL,       	    0,            	0,			0,          1,          0,        	-1 },
 	{ NULL,       			"spterm",   	NULL,       	    SPTAG(0),     	0,			1,          1,          0,        	-1 },
@@ -91,41 +107,33 @@ static const Rule rules[] = {
 	{ TERMCLASS,			TERMINAL,		"htop", 			0,				1,			1,			1,			0,			-1 },
 };
 
-/* layout(s) */
-static float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
-static int nmaster     = 1;    /* number of clients in master area */
-static int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
+
+// Layouts
+static float mfact     = 0.55; // factor of master area size [0.05..0.95]
+static int nmaster     = 1;    // number of clients in master area
+static int resizehints = 1;    // 1 means respect size hints in tiled resizals
 #define FORCE_VSPLIT 1  /* nrowgrid layout: force two clients to always split vertically */
-#include "vanitygaps.c"
+
 static const Layout layouts[] = {
-	/* symbol     arrange function */
- 	{ "[]=",	tile },			/* Default: Master on left, slaves on right */
-	{ "TTT",	bstack },		/* Master on top, slaves on bottom */
+	/* symbol   arrange function */
+ 	{ "[]=",	tile },			// Default: Master on left, slaves on right
+	{ "TTT",	bstack },		// Master on top, slaves on bottom
 
-	{ "[@]",	spiral },		/* Fibonacci spiral */
-	{ "[\\]",	dwindle },		/* Decreasing in size right and leftward */
+	{ "[@]",	spiral },		// Fibonacci spiral
+	{ "[\\]",	dwindle },		// Decreasing in size right and leftward
 
-	{ "[D]",	deck },			/* Master on left, slaves in monocle-like mode on right */
- 	{ "[M]",	monocle },		/* All windows on top of eachother */
+	{ "[D]",	deck },			// Master on left, slaves in monocle-like mode on right
+ 	{ "[M]",	monocle },		// All windows on top of eachother
 
-	{ "|M|",	centeredmaster },		/* Master in middle, slaves on sides */
-	{ ">M>",	centeredfloatingmaster },	/* Same but master floats */
+	{ "|M|",	centeredmaster },		// Master in middle, slaves on sides
+	{ ">M>",	centeredfloatingmaster },	// Same but master floats
 
-	{ "><>",	NULL },			/* no layout function means floating behavior */
+	{ "><>",	NULL },			// Floating
 	{ NULL,		NULL },
 };
 
 
-
-/* helper for spawning shell commands in the pre dwm-5.0 fashion */
-#define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
-
-/* commands */
-static const char *termcmd[]  = { TERMINAL, NULL };
-
-/*
- * Xresources preferences to load at startup
- */
+// XResources
 ResourcePref resources[] = {
 		{ "color0",				STRING,		&normbordercolor },
 		{ "color8",				STRING,		&selbordercolor },
@@ -148,10 +156,11 @@ ResourcePref resources[] = {
 		{ "smartgaps",			INTEGER, 	&smartgaps },
 };
 
-#include <X11/XF86keysym.h>
-#include "shiftview.c"
+// Helper for pawning shell
+#define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
+static const char *termcmd[]  = { TERMINAL, NULL };
 
-/* key definitions */
+// Keys
 #define MODKEY Mod4Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
@@ -162,10 +171,10 @@ ResourcePref resources[] = {
 	{ MOD,	XK_j,	ACTION##stack,	{.i = INC(+1) } }, \
 	{ MOD,	XK_k,	ACTION##stack,	{.i = INC(-1) } }, \
 	{ MOD,  XK_v,   ACTION##stack,  {.i = 0 } }, \
-	/* { MOD, XK_grave, ACTION##stack, {.i = PREVSEL } }, \ */
-	/* { MOD, XK_a,     ACTION##stack, {.i = 1 } }, \ */
-	/* { MOD, XK_z,     ACTION##stack, {.i = 2 } }, \ */
-	/* { MOD, XK_x,     ACTION##stack, {.i = -1 } }, */
+	// { MOD, XK_grave, ACTION##stack, {.i = PREVSEL } }, \
+	// { MOD, XK_a,     ACTION##stack, {.i = 1 } }, \
+	// { MOD, XK_z,     ACTION##stack, {.i = 2 } }, \
+	// { MOD, XK_x,     ACTION##stack, {.i = -1 } },
 
 static Key keys[] = {
 	/* modifier			key        function        argument */
@@ -333,7 +342,7 @@ static Key keys[] = {
 	// { MODKEY,			XK_Insert,		spawn,	SHCMD("xdotool type $(cat ~/.local/share/larbs/snippets | dmenu -i -l 50 | cut -d' ' -f1)") },
 };
 
-/* button definitions */
+// Mouse buttons
 /* click can be ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle, ClkClientWin, or ClkRootWin */
 static Button buttons[] = {
 	/* target               event mask      button          function        argument */
