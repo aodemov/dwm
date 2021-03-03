@@ -1,8 +1,3 @@
-// Includes
-#include "vanitygaps.c"
-#include <X11/XF86keysym.h>
-#include "shiftview.c"
-
 // Constants
 #define TERMINAL "st"
 #define TERMCLASS "St"
@@ -105,6 +100,7 @@ static const Rule rules[] = {
 	{ "discord",	 		"discord",		NULL,				1 << 8,			0,			0,			0,			0,			-1 },
 	{ TERMCLASS,			TERMINAL,		"pulsemixer", 		0,				1,			1,			1,			0,			-1 },
 	{ TERMCLASS,			TERMINAL,		"htop", 			0,				1,			1,			1,			0,			-1 },
+	{ TERMCLASS,			TERMINAL,		"nmtui", 			0,				1,			1,			1,			0,			-1 },
 };
 
 
@@ -113,6 +109,7 @@ static float mfact     = 0.55; // factor of master area size [0.05..0.95]
 static int nmaster     = 1;    // number of clients in master area
 static int resizehints = 1;    // 1 means respect size hints in tiled resizals
 #define FORCE_VSPLIT 1  /* nrowgrid layout: force two clients to always split vertically */
+#include "vanitygaps.c"
 
 static const Layout layouts[] = {
 	/* symbol   arrange function */
@@ -159,6 +156,9 @@ ResourcePref resources[] = {
 // Helper for pawning shell
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 static const char *termcmd[]  = { TERMINAL, NULL };
+
+#include <X11/XF86keysym.h>
+#include "shiftview.c"
 
 // Keys
 #define MODKEY Mod4Mask
@@ -243,24 +243,25 @@ static Key keys[] = {
 
 
 	/// Gaps
-	{ MODKEY,			XK_a,			togglegaps,	{0} },
-	{ MODKEY|ShiftMask,	XK_a,			defaultgaps,	{0} },
+	{ MODKEY,			XK_c,			togglegaps,		{0} },
+	{ MODKEY|ShiftMask,	XK_c,			defaultgaps,	{0} },
 
-	{ MODKEY,			XK_z,			incrgaps,	{.i = +3 } },
-	{ MODKEY,			XK_x,			incrgaps,	{.i = -3 } },
+	{ MODKEY,			XK_z,			incrgaps,	{.i = +2 } },
+	{ MODKEY,			XK_x,			incrgaps,	{.i = -2 } },
 
 
 	/// Applications
-	{ MODKEY,			XK_d,			spawn,	SHCMD("dmenu_run") },
+	{ MODKEY,			XK_d,			spawn,	SHCMD("rofi -show drun") },
+	{ MODKEY|ShiftMask,	XK_d,			spawn,	SHCMD("rofi -show run") },
 	{ MODKEY,			XK_Return,		spawn,	{.v = termcmd } },
 
 	{ MODKEY,			XK_BackSpace,	spawn,	SHCMD("sysact") },
 
 	{ MODKEY,			XK_w,			spawn,	SHCMD("$BROWSER") },
-	{ MODKEY,			XK_r,			spawn,	SHCMD(TERMINAL " -e lf") },
-	{ MODKEY,			XK_F4,			spawn,	SHCMD(TERMINAL " -e pulsemixer; kill -44 $(pidof dwmblocks)") },
-	{ MODKEY|ShiftMask,	XK_r,			spawn,	SHCMD(TERMINAL " -e htop") },
-	{ MODKEY|ShiftMask,	XK_w,			spawn,	SHCMD(TERMINAL " -e sudo nmtui") },
+	{ MODKEY,			XK_e,			spawn,	SHCMD(TERMINAL " -e lf") },
+	{ MODKEY|ShiftMask,	XK_e,			spawn,	SHCMD(TERMINAL " -g 80x30 -e pulsemixer; kill -44 $(pidof dwmblocks)") },
+	{ MODKEY,			XK_r,			spawn,	SHCMD(TERMINAL " -g 80x30 -e htop") },
+	{ MODKEY|ShiftMask,	XK_r,			spawn,	SHCMD(TERMINAL " -g 80x30 -e sudo nmtui") },
 
 
 	// Volume
