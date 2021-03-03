@@ -261,7 +261,7 @@ static Key keys[] = {
 	{ MODKEY,			XK_e,			spawn,	SHCMD(TERMINAL " -e lf") },
 	{ MODKEY|ShiftMask,	XK_e,			spawn,	SHCMD(TERMINAL " -g 80x30 -e pulsemixer; kill -44 $(pidof dwmblocks)") },
 	{ MODKEY,			XK_r,			spawn,	SHCMD(TERMINAL " -g 80x30 -e htop") },
-	{ MODKEY|ShiftMask,	XK_r,			spawn,	SHCMD(TERMINAL " -g 80x30 -e sudo nmtui") },
+	{ MODKEY|ShiftMask,	XK_r,			spawn,	SHCMD(TERMINAL " -g 80x30 -e nmtui") },
 
 
 	// Volume
