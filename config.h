@@ -87,6 +87,8 @@ static const Rule rules[] = {
 	{ "VK", 				"vk",			NULL,				1 << 7,			0,			0,			0,			0,			-1 },
 	{ "TelegramDesktop", 	NULL, 			NULL,				1 << 7, 		0,			0, 			0,			0,			-1 },
 	{ "discord",	 		"discord",		NULL,				1 << 8,			0,			0,			0,			0,			-1 },
+	{ TERMCLASS,			TERMINAL,		"pulsemixer", 		0,				1,			1,			1,			0,			-1 },
+	{ TERMCLASS,			TERMINAL,		"htop", 			0,				1,			1,			1,			0,			-1 },
 };
 
 /* layout(s) */
